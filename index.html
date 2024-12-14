@@ -5,6 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
+    /* Original light theme stays as default */
     --bg-color: #f0f0f0;
     --container-bg: #fff;
     --text-color: #333;
@@ -20,6 +21,63 @@
     --result-underpay-bg: #90EE90;
     --result-balanced-bg: #E6E6FA;
     --result-text-color: #333;
+  }
+
+  /* Red theme */
+  .red-theme {
+    --bg-color: #ffebee;
+    --container-bg: #fff5f5;
+    --text-color: #b71c1c;
+    --border-color: #ef9a9a;
+    --hover-bg: #ffcdd2;
+    --selected-border: #d32f2f;
+    --button-bg: #ffcdd2;
+    --button-border: #ef9a9a;
+    --scrollbar-bg: #ffebee;
+    --scrollbar-thumb: #ef9a9a;
+    --scrollbar-thumb-hover: #e57373;
+    --result-overpay-bg: #d32f2f;
+    --result-underpay-bg: #c62828;
+    --result-balanced-bg: #b71c1c;
+    --result-text-color: #fff;
+  }
+
+  /* Green theme */
+  .green-theme {
+    --bg-color: #e8f5e9;
+    --container-bg: #f1f8e9;
+    --text-color: #1b5e20;
+    --border-color: #a5d6a7;
+    --hover-bg: #c8e6c9;
+    --selected-border: #43a047;
+    --button-bg: #c8e6c9;
+    --button-border: #a5d6a7;
+    --scrollbar-bg: #e8f5e9;
+    --scrollbar-thumb: #a5d6a7;
+    --scrollbar-thumb-hover: #81c784;
+    --result-overpay-bg: #43a047;
+    --result-underpay-bg: #388e3c;
+    --result-balanced-bg: #2e7d32;
+    --result-text-color: #fff;
+  }
+
+  /* Blue theme */
+  .blue-theme {
+    --bg-color: #e3f2fd;
+    --container-bg: #e8f0fe;
+    --text-color: #0d47a1;
+    --border-color: #90caf9;
+    --hover-bg: #bbdefb;
+    --selected-border: #1976d2;
+    --button-bg: #bbdefb;
+    --button-border: #90caf9;
+    --scrollbar-bg: #e3f2fd;
+    --scrollbar-thumb: #90caf9;
+    --scrollbar-thumb-hover: #64b5f6;
+    --result-overpay-bg: #1976d2;
+    --result-underpay-bg: #1565c0;
+    --result-balanced-bg: #0d47a1;
+    --result-text-color: #fff;
   }
 
   .dark-mode {
@@ -38,6 +96,38 @@
     --result-underpay-bg: #006400;
     --result-balanced-bg: #483D8B;
     --result-text-color: #e0e0e0;
+  }
+
+  .custom-theme {
+    /* These will be dynamically set by the color picker inputs */
+  }
+
+  .color-pickers {
+    margin: 15px 0;
+    padding: 15px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .color-picker {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    justify-content: space-between;
+  }
+
+  .color-picker label {
+    flex: 1;
+    margin-right: 10px;
+  }
+
+  .color-picker input[type="color"] {
+    padding: 0;
+    width: 50px;
+    height: 25px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background: none;
   }
 
   body {
@@ -435,6 +525,28 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     z-index: 100;
     color: var(--text-color);
+    max-height: calc(100vh - 40px); /* Subtract 40px to give some space from top/bottom */
+    overflow-y: auto;
+    scrollbar-width: thin; /* For Firefox */
+  }
+
+  /* Add custom scrollbar styles for WebKit browsers */
+  .settings-panel::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .settings-panel::-webkit-scrollbar-track {
+    background: var(--scrollbar-bg);
+    border-radius: 4px;
+  }
+
+  .settings-panel::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+  }
+
+  .settings-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
   }
 
   .settings-toggle {
@@ -536,13 +648,12 @@
         <li>Added special stat multipliers (1.05x for 1 stat, 1.1x for 2 stats, 1.5x for 3 stats, 2x for 4 stats)</li>
         <li>Added serial number tracking</li>
         <li>Fixed calculation issues with high-value items</li>
-	<li>Added user settings!</li>
       </ul>
     </div>
     <div class="social-banner">
       📱 Connect with us: 
-      <a href="https://sites.google.com/view/bp2valuelist/home">Green's Value List</a> | 
-      <a href="https://discord.gg/bp2">Discord Server</a>
+      <a href="https://example.com">Website</a> | 
+      <a href="https://discord.gg/example">Discord Server</a>
     </div>
     <div class="trade-area">
       <div class="trade-column">
@@ -584,8 +695,46 @@
   <div id="settingsPanel" class="settings-panel" style="display: none;">
     <button class="close-button">&times;</button>
     <div class="theme-setting">
-      <input type="checkbox" id="darkModeToggle">
-      <label for="darkModeToggle">Dark Mode</label>
+      <label>Theme:</label>
+      <select id="themeSelect">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="red">Red</option>
+        <option value="green">Green</option>
+        <option value="blue">Blue</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+    <div class="color-pickers">
+      <h3>Custom Theme Colors</h3>
+      <div class="color-picker">
+        <label>Background Color:</label>
+        <input type="color" id="bgColor" value="#f0f0f0">
+      </div>
+      <div class="color-picker">
+        <label>Container Background:</label>
+        <input type="color" id="containerBg" value="#ffffff">
+      </div>
+      <div class="color-picker">
+        <label>Text Color:</label>
+        <input type="color" id="textColor" value="#333333">
+      </div>
+      <div class="color-picker">
+        <label>Border Color:</label>
+        <input type="color" id="borderColor" value="#dddddd">
+      </div>
+      <div class="color-picker">
+        <label>Hover Background:</label>
+        <input type="color" id="hoverBg" value="#e8f5e9">
+      </div>
+      <div class="color-picker">
+        <label>Selected Border:</label>
+        <input type="color" id="selectedBorder" value="#4CAF50">
+      </div>
+      <div class="color-picker">
+        <label>Button Background:</label>
+        <input type="color" id="buttonBg" value="#f0f0f0">
+      </div>
     </div>
     <h3>Stat Settings</h3>
     <div class="stat-setting">
@@ -618,6 +767,16 @@
         <input type="number" id="level35A" value="0.4" step="0.1"> x ln(serial) + 
         <input type="number" id="level35B" value="3.6" step="0.1">
       </div>
+    </div>
+    <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+      <h3>Settings Import/Export</h3>
+      <button onclick="exportSettings()" style="margin-right: 10px; padding: 5px 10px; background: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); border-radius: 3px; cursor: pointer;">
+        Export Settings
+      </button>
+      <input type="file" id="importSettings" accept=".json" style="display: none;">
+      <button onclick="document.getElementById('importSettings').click()" style="padding: 5px 10px; background: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); border-radius: 3px; cursor: pointer;">
+        Import Settings
+      </button>
     </div>
   </div>
 
@@ -1240,14 +1399,61 @@
       result.style.color = `var(--result-text-color)`;
     }
 
-    function toggleDarkMode(e) {
-      document.body.classList.toggle('dark-mode');
+    function applyCustomTheme() {
+      const customColors = {
+        '--bg-color': document.getElementById('bgColor').value,
+        '--container-bg': document.getElementById('containerBg').value,
+        '--text-color': document.getElementById('textColor').value,
+        '--border-color': document.getElementById('borderColor').value,
+        '--hover-bg': document.getElementById('hoverBg').value,
+        '--selected-border': document.getElementById('selectedBorder').value,
+        '--button-bg': document.getElementById('buttonBg').value,
+        '--button-border': document.getElementById('borderColor').value,
+        '--scrollbar-bg': document.getElementById('containerBg').value,
+        '--scrollbar-thumb': document.getElementById('borderColor').value,
+        '--scrollbar-thumb-hover': document.getElementById('textColor').value,
+        '--result-overpay-bg': '#FFCCCB',
+        '--result-underpay-bg': '#90EE90',
+        '--result-balanced-bg': '#E6E6FA',
+        '--result-text-color': document.getElementById('textColor').value
+      };
+
+      // Remove all theme classes
+      document.body.classList.remove('dark-mode', 'red-theme', 'green-theme', 'blue-theme');
+      document.body.classList.add('custom-theme');
+
+      // Apply custom colors
+      Object.entries(customColors).forEach(([property, value]) => {
+        document.documentElement.style.setProperty(property, value);
+      });
+    }
+
+    function changeTheme(theme) {
+      // Remove all theme classes
+      document.body.classList.remove('dark-mode', 'red-theme', 'green-theme', 'blue-theme', 'custom-theme');
       
-      // Update checkbox state if function called programmatically
-      if (e && e.target) {
-        document.body.classList.toggle('dark-mode', e.target.checked);
+      // Reset custom properties
+      document.documentElement.removeAttribute('style');
+
+      if (theme === 'custom') {
+        applyCustomTheme();
       } else {
-        document.getElementById('darkModeToggle').checked = document.body.classList.contains('dark-mode');
+        // Add the selected theme class
+        switch(theme) {
+          case 'dark':
+            document.body.classList.add('dark-mode');
+            break;
+          case 'red':
+            document.body.classList.add('red-theme');
+            break;
+          case 'green':
+            document.body.classList.add('green-theme');
+            break;
+          case 'blue':
+            document.body.classList.add('blue-theme');
+            break;
+          // Light theme is default, no class needed
+        }
       }
 
       // Update all visible charts
@@ -1274,7 +1480,18 @@
       updateResult();
     }
 
-    document.getElementById('darkModeToggle').addEventListener('change', toggleDarkMode);
+    document.getElementById('themeSelect').addEventListener('change', (e) => {
+      changeTheme(e.target.value);
+    });
+
+    document.querySelectorAll('.color-pickers input[type="color"]').forEach(input => {
+      input.addEventListener('change', () => {
+        if (document.getElementById('themeSelect').value === 'custom') {
+          applyCustomTheme();
+        }
+      });
+    });
+
     document.getElementById('settingsToggle').addEventListener('click', () => {
       const panel = document.getElementById('settingsPanel');
       panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
@@ -1360,5 +1577,91 @@
         document.querySelector('.modal-overlay').style.display = 'none';
       }
     });
+
+    function exportSettings() {
+      const settings = {
+        theme: document.getElementById('themeSelect').value,
+        customColors: {
+          bgColor: document.getElementById('bgColor').value,
+          containerBg: document.getElementById('containerBg').value,
+          textColor: document.getElementById('textColor').value,
+          borderColor: document.getElementById('borderColor').value,
+          hoverBg: document.getElementById('hoverBg').value,
+          selectedBorder: document.getElementById('selectedBorder').value,
+          buttonBg: document.getElementById('buttonBg').value
+        },
+        enabledStats: { ...enabledStats },
+        serialMultipliers: { ...serialMultipliers }
+      };
+
+      const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'trade-calculator-settings.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('importSettings').addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        importSettings(e.target.files[0]);
+        e.target.value = ''; // Reset the input
+      }
+    });
+
+    function importSettings(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const settings = JSON.parse(e.target.result);
+          
+          // Apply theme
+          document.getElementById('themeSelect').value = settings.theme;
+          changeTheme(settings.theme);
+
+          // Apply custom colors
+          if (settings.customColors) {
+            document.getElementById('bgColor').value = settings.customColors.bgColor;
+            document.getElementById('containerBg').value = settings.customColors.containerBg;
+            document.getElementById('textColor').value = settings.customColors.textColor;
+            document.getElementById('borderColor').value = settings.customColors.borderColor;
+            document.getElementById('hoverBg').value = settings.customColors.hoverBg;
+            document.getElementById('selectedBorder').value = settings.customColors.selectedBorder;
+            document.getElementById('buttonBg').value = settings.customColors.buttonBg;
+            
+            if (settings.theme === 'custom') {
+              applyCustomTheme();
+            }
+          }
+
+          // Apply enabled stats
+          if (settings.enabledStats) {
+            Object.entries(settings.enabledStats).forEach(([stat, enabled]) => {
+              enabledStats[stat] = enabled;
+              document.getElementById(`enable${stat.charAt(0).toUpperCase() + stat.slice(1)}`).checked = enabled;
+            });
+          }
+
+          // Apply serial multipliers
+          if (settings.serialMultipliers) {
+            serialMultipliers = settings.serialMultipliers;
+            document.getElementById('level50A').value = serialMultipliers.level50.a;
+            document.getElementById('level50B').value = serialMultipliers.level50.b;
+            document.getElementById('level35A').value = serialMultipliers.level35.a;
+            document.getElementById('level35B').value = serialMultipliers.level35.b;
+          }
+
+          updateAllItems();
+          alert('Settings imported successfully!');
+        } catch (error) {
+          alert('Error importing settings. Please make sure the file is valid.');
+          console.error(error);
+        }
+      };
+      reader.readAsText(file);
+    }
   </script>
 </body></html>
