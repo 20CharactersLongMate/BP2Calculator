@@ -1,7 +1,7 @@
 <html><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BP2 W/E/L Calculator</title>
+<title>ItemTrade Grid Calculator with Dark Mode</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
@@ -504,11 +504,28 @@
   .theme-setting label {
     margin-left: 8px;
   }
+
+  /* Add styles for the close button in the settings panel */
+  .settings-panel .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 5px;
+  }
+
+  .settings-panel .close-button:hover {
+    opacity: 0.8;
+}
 </style>
 </head>
 <body>
   <div class="container">
-    <h1>BP2 W/E/L Calculator</h1>
+    <h1>ItemTrade Grid Calculator with Dark Mode</h1>
     <div class="disclaimer-banner">
       ⚠️ Disclaimer: Items with special serial numbers may sell for significantly more than calculated values. This calculator provides base estimates only.
     </div>
@@ -564,6 +581,7 @@
   </div>
   <button id="settingsToggle" class="settings-toggle">⚙️ Settings</button>
   <div id="settingsPanel" class="settings-panel" style="display: none;">
+    <button class="close-button">&times;</button>
     <div class="theme-setting">
       <input type="checkbox" id="darkModeToggle">
       <label for="darkModeToggle">Dark Mode</label>
@@ -587,14 +605,14 @@
     </div>
     <h3>Serial Multiplier Settings</h3>
     <div class="serial-setting">
-      <label>Contraband Formula: -A * ln(x) + B</label>
+      <label>Level 50 Formula: -A * ln(x) + B</label>
       <div class="formula-inputs">
         <input type="number" id="level50A" value="2" step="0.1"> x ln(serial) + 
         <input type="number" id="level50B" value="17" step="0.1">
       </div>
     </div>
     <div class="serial-setting">
-      <label>Legendary and Epic Formula: -A * ln(x) + B</label>
+      <label>Level 35 Formula: -A * ln(x) + B</label>
       <div class="formula-inputs">
         <input type="number" id="level35A" value="0.4" step="0.1"> x ln(serial) + 
         <input type="number" id="level35B" value="3.6" step="0.1">
@@ -1259,6 +1277,10 @@
     document.getElementById('settingsToggle').addEventListener('click', () => {
       const panel = document.getElementById('settingsPanel');
       panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.querySelector('.settings-panel .close-button').addEventListener('click', () => {
+      document.getElementById('settingsPanel').style.display = 'none';
     });
 
     document.getElementById('level50A').addEventListener('change', (e) => {
