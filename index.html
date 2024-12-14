@@ -248,10 +248,10 @@
     padding: 10px;
     border-radius: 5px;
   }
-  #darkModeToggle {
+  #settingsToggle {
     position: fixed;
     top: 20px;
-    right: 20px;
+    left: 20px;
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
@@ -260,9 +260,6 @@
     border: 1px solid var(--button-border);
     border-radius: 5px;
     transition: all 0.3s ease;
-  }
-  #darkModeToggle:hover {
-    background-color: var(--hover-bg);
   }
 
   .disclaimer-banner {
@@ -426,6 +423,87 @@
     height: 300px;
     margin: 20px 0;
   }
+
+  .settings-panel {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 15px;
+    background-color: var(--container-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 100;
+    color: var(--text-color);
+  }
+
+  .settings-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: 1px solid var(--button-border);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+
+  .settings-toggle:hover {
+    background-color: var(--hover-bg);
+  }
+
+  .stat-setting {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .stat-setting label {
+    margin-left: 8px;
+  }
+
+  .serial-setting {
+    margin: 15px 0;
+    padding: 5px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .serial-setting label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .formula-inputs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .formula-inputs input {
+    width: 60px;
+    padding: 3px;
+    text-align: center;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    border: 1px solid var(--button-border);
+    border-radius: 3px;
+  }
+
+  .theme-setting {
+    margin: 10px 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+  }
+
+  .theme-setting label {
+    margin-left: 8px;
+  }
 </style>
 </head>
 <body>
@@ -445,8 +523,8 @@
     </div>
     <div class="social-banner">
       📱 Connect with us: 
-      <a href="https://sites.google.com/view/bp2valuelist/home">Green's Value List</a> | 
-      <a href="https://discord.gg/bp2">Discord Server</a>
+      <a href="https://example.com">Website</a> | 
+      <a href="https://discord.gg/example">Discord Server</a>
     </div>
     <div class="trade-area">
       <div class="trade-column">
@@ -484,7 +562,45 @@
     </div>
     <div id="result"></div>
   </div>
-  <button id="darkModeToggle">Toggle Dark Mode</button>
+  <button id="settingsToggle" class="settings-toggle">⚙️ Settings</button>
+  <div id="settingsPanel" class="settings-panel" style="display: none;">
+    <div class="theme-setting">
+      <input type="checkbox" id="darkModeToggle">
+      <label for="darkModeToggle">Dark Mode</label>
+    </div>
+    <h3>Stat Settings</h3>
+    <div class="stat-setting">
+      <input type="checkbox" id="enableStuds" checked>
+      <label for="enableStuds">Enable Studs Stat</label>
+    </div>
+    <div class="stat-setting">
+      <input type="checkbox" id="enableTags" checked>
+      <label for="enableTags">Enable Tags Stat</label>
+    </div>
+    <div class="stat-setting">
+      <input type="checkbox" id="enableMinutes" checked>
+      <label for="enableMinutes">Enable Minutes Stat</label>
+    </div>
+    <div class="stat-setting">
+      <input type="checkbox" id="enableBullets" checked>
+      <label for="enableBullets">Enable Bullets Stat</label>
+    </div>
+    <h3>Serial Multiplier Settings</h3>
+    <div class="serial-setting">
+      <label>Contraband Formula: -A * ln(x) + B</label>
+      <div class="formula-inputs">
+        <input type="number" id="level50A" value="2" step="0.1"> x ln(serial) + 
+        <input type="number" id="level50B" value="17" step="0.1">
+      </div>
+    </div>
+    <div class="serial-setting">
+      <label>Legendary and Epic Formula: -A * ln(x) + B</label>
+      <div class="formula-inputs">
+        <input type="number" id="level35A" value="0.4" step="0.1"> x ln(serial) + 
+        <input type="number" id="level35B" value="3.6" step="0.1">
+      </div>
+    </div>
+  </div>
 
   <div class="modal-overlay">
     <div class="modal">
@@ -495,19 +611,23 @@
   </div>
 
   <script>
-    function filterItems(searchTerm, containerId) {
-      const container = document.getElementById(containerId);
-      const items = container.querySelectorAll('.item');
-      
-      items.forEach(item => {
-        const itemName = item.querySelector('.item-name').textContent.toLowerCase();
-        if (itemName.includes(searchTerm.toLowerCase())) {
-          item.style.display = '';
-        } else {
-          item.style.display = 'none';
-        }
-      });
-    }
+    let enabledStats = {
+      studs: true,
+      tags: true,
+      minutes: true,
+      bullets: true
+    };
+
+    let serialMultipliers = {
+      level50: {
+        a: 2,
+        b: 17
+      },
+      level35: {
+        a: 0.4,
+        b: 3.6
+      }
+    };
 
     const items = [
       { id: 1, name: "Dark Matter Rifle", baseValue: 125000000, image: "DarkMatterRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
@@ -629,7 +749,7 @@
             <div class="stat-grid">
               ${['studs', 'tags', 'minutes', 'bullets'].map(stat => `
                 <div class="stat-multiplier">
-                  <input type="checkbox" id="${item.id}-${stat}">
+                  <input type="checkbox" id="${item.id}-${stat}"> 
                   <label for="${item.id}-${stat}">${stat}:</label>
                   <input type="number" value="0" min="0" max="10" step="0.1" data-stat="${stat}" disabled>
                 </div>
@@ -652,7 +772,9 @@
         itemElement.querySelector('.item-quantity input').addEventListener('change', (e) => updateQuantity(item, containerId, e.target.value));
         itemElement.querySelector('.item-value input').addEventListener('change', (e) => updateValue(item, containerId, e.target.value));
         itemElement.querySelector('.item-level input').addEventListener('change', (e) => updateLevel(item, containerId, e.target.value));
-        itemElement.querySelector('.item-serial input').addEventListener('change', (e) => updateSerial(item, containerId, e.target.value));
+        itemElement.querySelector('.item-serial input').addEventListener('input', (e) => {
+          updateSerial(item, containerId, e.target.value);
+        });
         itemElement.querySelectorAll('.stat-multiplier input[data-stat]').forEach(input => {
           input.addEventListener('change', (e) => updateStatMultiplier(item, containerId, e.target.dataset.stat, e.target.value));
         });
@@ -754,14 +876,20 @@
       const trade = isYourSide ? yourTrade : theirTrade;
       const index = trade.findIndex(i => i.id === item.id && i.level === item.level && i.serial === item.serial && JSON.stringify(i.stats) === JSON.stringify(item.stats));
 
+      // Update the item's serial
       item.serial = serial;
 
+      // Update the corresponding trade item if it exists
       if (index !== -1) {
         trade[index].serial = serial;
       }
 
+      // This will trigger the value update with the new serial number
       updateItemValue(item, side);
+      
+      // Update trade summary and result
       updateTradeSummary(isYourSide);
+      updateResult();
     }
 
     function updateLevel(item, side, level) {
@@ -829,10 +957,16 @@
       if (item.serial && !isNaN(parseInt(item.serial))) {
         const serialNumber = parseInt(item.serial);
         if (serialNumber > 0) {
+          // Get current formula values from settings
+          const level50A = parseFloat(document.getElementById('level50A').value);
+          const level50B = parseFloat(document.getElementById('level50B').value);
+          const level35A = parseFloat(document.getElementById('level35A').value);
+          const level35B = parseFloat(document.getElementById('level35B').value);
+          
           if (item.maxLevel === 50) {
-            serialMultiplier = Math.max(1, -2 * Math.log(serialNumber) + 17);
+            serialMultiplier = Math.max(1, -level50A * Math.log(serialNumber) + level50B);
           } else if (item.maxLevel === 35) {
-            serialMultiplier = Math.max(1, -0.4 * Math.log(serialNumber) + 3.6);
+            serialMultiplier = Math.max(1, -level35A * Math.log(serialNumber) + level35B);
           }
         }
       }
@@ -962,9 +1096,10 @@
     function updateItemValue(item, side) {
       const itemElement = document.querySelector(`#${side} .item[data-id="${item.id}"]`);
       
+      // Only count enabled stats that are checked
       const checkedStats = Object.keys(item.stats).filter(stat => {
         const checkbox = itemElement.querySelector(`input[type="checkbox"][id="${item.id}-${stat}"]`);
-        return checkbox.checked;
+        return checkbox.checked && enabledStats[stat];
       }).length;
 
       let statMultiplier = 1;
@@ -991,10 +1126,16 @@
       if (item.serial && !isNaN(parseInt(item.serial))) {
         const serialNumber = parseInt(item.serial);
         if (serialNumber > 0) {
+          // Get current formula values from settings
+          const level50A = parseFloat(document.getElementById('level50A').value);
+          const level50B = parseFloat(document.getElementById('level50B').value);
+          const level35A = parseFloat(document.getElementById('level35A').value);
+          const level35B = parseFloat(document.getElementById('level35B').value);
+          
           if (item.maxLevel === 50) {
-            serialMultiplier = Math.max(1, -2 * Math.log(serialNumber) + 17);
+            serialMultiplier = Math.max(1, -level50A * Math.log(serialNumber) + level50B);
           } else if (item.maxLevel === 35) {
-            serialMultiplier = Math.max(1, -0.4 * Math.log(serialNumber) + 3.6);
+            serialMultiplier = Math.max(1, -level35A * Math.log(serialNumber) + level35B);
           }
         }
       }
@@ -1080,13 +1221,14 @@
       result.style.color = `var(--result-text-color)`;
     }
 
-    function toggleDarkMode() {
+    function toggleDarkMode(e) {
       document.body.classList.toggle('dark-mode');
-      const darkModeToggle = document.getElementById('darkModeToggle');
-      if (document.body.classList.contains('dark-mode')) {
-        darkModeToggle.textContent = 'Toggle Light Mode';
+      
+      // Update checkbox state if function called programmatically
+      if (e && e.target) {
+        document.body.classList.toggle('dark-mode', e.target.checked);
       } else {
-        darkModeToggle.textContent = 'Toggle Dark Mode';
+        document.getElementById('darkModeToggle').checked = document.body.classList.contains('dark-mode');
       }
 
       // Update all visible charts
@@ -1113,7 +1255,69 @@
       updateResult();
     }
 
-    document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+    document.getElementById('darkModeToggle').addEventListener('change', toggleDarkMode);
+    document.getElementById('settingsToggle').addEventListener('click', () => {
+      const panel = document.getElementById('settingsPanel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.getElementById('level50A').addEventListener('change', (e) => {
+      serialMultipliers.level50.a = parseFloat(e.target.value);
+      updateAllItems();
+    });
+
+    document.getElementById('level50B').addEventListener('change', (e) => {
+      serialMultipliers.level50.b = parseFloat(e.target.value);
+      updateAllItems();
+    });
+
+    document.getElementById('level35A').addEventListener('change', (e) => {
+      serialMultipliers.level35.a = parseFloat(e.target.value);
+      updateAllItems();
+    });
+
+    document.getElementById('level35B').addEventListener('change', (e) => {
+      serialMultipliers.level35.b = parseFloat(e.target.value);
+      updateAllItems();
+    });
+
+    function updateAllItems() {
+      yourTrade.forEach(item => {
+        const itemElement = document.querySelector(`#yourItems .item[data-id="${item.id}"]`);
+        if (itemElement) {
+          updateItemValue(item, 'yourItems');
+        }
+      });
+      
+      theirTrade.forEach(item => {
+        const itemElement = document.querySelector(`#theirItems .item[data-id="${item.id}"]`);
+        if (itemElement) {
+          updateItemValue(item, 'theirItems');
+        }
+      });
+    }
+
+    ['studs', 'tags', 'minutes', 'bullets'].forEach(stat => {
+      document.getElementById(`enable${stat.charAt(0).toUpperCase() + stat.slice(1)}`).addEventListener('change', (e) => {
+        enabledStats[stat] = e.target.checked;
+        
+        // Update all items to reflect new stat settings
+        yourTrade.forEach(item => {
+          const itemElement = document.querySelector(`#yourItems .item[data-id="${item.id}"]`);
+          if (itemElement) {
+            updateItemValue(item, 'yourItems');
+          }
+        });
+        
+        theirTrade.forEach(item => {
+          const itemElement = document.querySelector(`#theirItems .item[data-id="${item.id}"]`);
+          if (itemElement) {
+            updateItemValue(item, 'theirItems');
+          }
+        });
+      });
+    });
+
     createItemGrid('yourItems');
     createItemGrid('theirItems');
 
