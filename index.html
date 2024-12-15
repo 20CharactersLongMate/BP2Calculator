@@ -648,11 +648,13 @@
         <li>Added special stat multipliers (1.05x for 1 stat, 1.1x for 2 stats, 1.5x for 3 stats, 2x for 4 stats)</li>
         <li>Added serial number tracking</li>
         <li>Fixed calculation issues with high-value items</li>
+		<li>Added user settings!</li>
+		<li>Fixed the search bar</li>
       </ul>
     </div>
     <div class="social-banner">
       📱 Connect with us: 
-      <a href="https://sites.google.com/view/bp2valuelist/home">Green's Value List</a> | 
+      <a href="https://sites.google.com/view/bp2valuelist/home?authuser=0">Website</a> | 
       <a href="https://discord.gg/BP2">Discord Server</a>
     </div>
     <div class="trade-area">
@@ -789,6 +791,22 @@
   </div>
 
   <script>
+    function filterItems(searchTerm, containerId) {
+      const container = document.getElementById(containerId);
+      const items = container.getElementsByClassName('item');
+      
+      searchTerm = searchTerm.toLowerCase();
+      
+      Array.from(items).forEach(item => {
+        const itemName = item.querySelector('.item-name').textContent.toLowerCase();
+        if (itemName.includes(searchTerm)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
     let enabledStats = {
       studs: true,
       tags: true,
