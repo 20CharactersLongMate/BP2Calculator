@@ -794,7 +794,7 @@
   </div>
 
   <script>
-   const items = [
+    const items = [
       { id: 1, name: "Dark Matter Rifle", baseValue: 125000000, baseCustomValue: null, demand: "4" , image: "DarkMatterRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
       { id: 2, name: "Silenced Pistol", baseValue: 85000000, baseCustomValue: null, demand: "4" , image: "SilencedPistol.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
       { id: 3, name: "The Cobra", baseValue: 100000000, baseCustomValue: null, demand: "4" , image: "TheCobra.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
@@ -1565,26 +1565,6 @@
       });
     });
 
-    createItemGrid('yourItems');
-    createItemGrid('theirItems');
-
-    document.querySelectorAll('.item-search').forEach(searchBar => {
-      searchBar.addEventListener('input', (e) => {
-        const containerId = e.target.closest('.trade-column').querySelector('.item-grid').id;
-        filterItems(e.target.value, containerId);
-      });
-    });
-
-    document.querySelector('.modal-close').addEventListener('click', () => {
-      document.querySelector('.modal-overlay').style.display = 'none';
-    });
-
-    document.querySelector('.modal-overlay').addEventListener('click', (e) => {
-      if (e.target === document.querySelector('.modal-overlay')) {
-        document.querySelector('.modal-overlay').style.display = 'none';
-      }
-    });
-
     function exportSettings() {
       const settings = {
         theme: document.getElementById('themeSelect').value,
@@ -1598,7 +1578,14 @@
           buttonBg: document.getElementById('buttonBg').value
         },
         enabledStats: { ...enabledStats },
-        serialMultipliers: { ...serialMultipliers }
+        serialMultipliers: { ...serialMultipliers },
+        // Add custom base values
+        customBaseValues: items.reduce((acc, item) => {
+          if (item.baseCustomValue !== null) {
+            acc[item.id] = item.baseCustomValue;
+          }
+          return acc;
+        }, {})
       };
 
       const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
@@ -1657,6 +1644,23 @@
             document.getElementById('level35B').value = serialMultipliers.level35.b;
           }
 
+          // Import custom base values
+          if (settings.customBaseValues) {
+            Object.entries(settings.customBaseValues).forEach(([itemId, value]) => {
+              const item = items.find(i => i.id === parseInt(itemId));
+              if (item) {
+                item.baseCustomValue = value;
+                // Update the base value input in both grids
+                ['yourItems', 'theirItems'].forEach(gridId => {
+                  const itemElement = document.querySelector(`#${gridId} .item[data-id="${itemId}"] .base-value-input`);
+                  if (itemElement) {
+                    itemElement.value = value;
+                  }
+                });
+              }
+            });
+          }
+
           updateAllItems();
           alert('Settings imported successfully!');
         } catch (error) {
@@ -1666,5 +1670,25 @@
       };
       reader.readAsText(file);
     }
+
+    createItemGrid('yourItems');
+    createItemGrid('theirItems');
+
+    document.querySelectorAll('.item-search').forEach(searchBar => {
+      searchBar.addEventListener('input', (e) => {
+        const containerId = e.target.closest('.trade-column').querySelector('.item-grid').id;
+        filterItems(e.target.value, containerId);
+      });
+    });
+
+    document.querySelector('.modal-close').addEventListener('click', () => {
+      document.querySelector('.modal-overlay').style.display = 'none';
+    });
+
+    document.querySelector('.modal-overlay').addEventListener('click', (e) => {
+      if (e.target === document.querySelector('.modal-overlay')) {
+        document.querySelector('.modal-overlay').style.display = 'none';
+      }
+    });
   </script>
 </body></html>
