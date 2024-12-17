@@ -1143,24 +1143,21 @@
     }
 
     function calculateDemandBalance() {
-      const yourAverageDemand = yourTrade.reduce((sum, item) => sum + (item.demand * item.quantity), 0) / 
-        yourTrade.reduce((sum, item) => sum + item.quantity, 0) || 0;
-      
-      const theirAverageDemand = theirTrade.reduce((sum, item) => sum + (item.demand * item.quantity), 0) / 
-        theirTrade.reduce((sum, item) => sum + item.quantity, 0) || 0;
+      const yourTotalDemand = yourTrade.reduce((sum, item) => sum + (item.demand * item.quantity), 0);
+      const theirTotalDemand = theirTrade.reduce((sum, item) => sum + (item.demand * item.quantity), 0);
 
       if (yourTrade.length === 0 || theirTrade.length === 0) {
         return 'No items to compare';
       }
 
-      const demandDiff = yourAverageDemand - theirAverageDemand;
-      
-      if (demandDiff < -0.5) {
-        return 'WIN - You are receiving higher demand items';
-      } else if (demandDiff > 0.5) {
-        return 'LOSS - You are giving higher demand items';
+      const demandDiff = theirTotalDemand - yourTotalDemand; // Positive means you're receiving more stars
+
+      if (demandDiff > 1) { // More than 1 star difference in your favor
+        return 'WIN - You are receiving more demand stars';
+      } else if (demandDiff < -1) { // More than 1 star difference against you
+        return 'LOSS - You are giving more demand stars';
       }
-      return 'EVEN - Similar demand on both sides';
+      return 'EVEN - Similar total demand stars';
     }
 
     function updateResult() {
@@ -1464,64 +1461,422 @@
       result.style.color = `var(--result-text-color)`;
     }
 
-    function applyCustomTheme() {
-      const customColors = {
-        '--bg-color': document.getElementById('bgColor').value,
-        '--container-bg': document.getElementById('containerBg').value,
-        '--text-color': document.getElementById('textColor').value,
-        '--border-color': document.getElementById('borderColor').value,
-        '--hover-bg': document.getElementById('hoverBg').value,
-        '--selected-border': document.getElementById('selectedBorder').value,
-        '--button-bg': document.getElementById('buttonBg').value,
-        '--button-border': document.getElementById('borderColor').value,
-        '--scrollbar-bg': document.getElementById('containerBg').value,
-        '--scrollbar-thumb': document.getElementById('borderColor').value,
-        '--scrollbar-thumb-hover': document.getElementById('textColor').value,
-        '--result-overpay-bg': '#FFCCCB',
-        '--result-underpay-bg': '#90EE90',
-        '--result-balanced-bg': '#E6E6FA',
-        '--result-text-color': document.getElementById('textColor').value
-      };
+    function updateInflationDisplay(container, item) {
+      const inflationDetails = container.querySelector('.inflation-details');
+      const projectedValues = inflationDetails.querySelector('.projected-values');
 
-      document.body.classList.remove('dark-mode', 'red-theme', 'green-theme', 'blue-theme');
-      document.body.classList.add('custom-theme');
-
-      Object.entries(customColors).forEach(([property, value]) => {
-        document.documentElement.style.setProperty(property, value);
-      });
-    }
-
-    function changeTheme(theme) {
-      document.body.classList.remove('dark-mode', 'red-theme', 'green-theme', 'blue-theme', 'custom-theme');
+      const checkedStats = Object.keys(item.stats).filter(stat => item.stats[stat] > 0).length;
+      let statMultiplier = 1;
+      switch(checkedStats) {
+        case 1: statMultiplier = 1.05; break;
+        case 2: statMultiplier = 1.1; break;
+        case 3: statMultiplier = 1.5; break;
+        case 4: statMultiplier = 2.0; break;
+      }
       
-      document.documentElement.removeAttribute('style');
-
-      if (theme === 'custom') {
-        applyCustomTheme();
-      } else {
-        switch(theme) {
-          case 'dark':
-            document.body.classList.add('dark-mode');
-            break;
-          case 'red':
-            document.body.classList.add('red-theme');
-            break;
-          case 'green':
-            document.body.classList.add('green-theme');
-            break;
-          case 'blue':
-            document.body.classList.add('blue-theme');
-            break;
+      const levelMultiplier = item.maxLevel > 1 ? 
+        1 + (0.5 * ((item.level - 1) / (item.maxLevel - 1))) : 
+        1; 
+      
+      let serialMultiplier = 1;
+      if (item.serial && !isNaN(parseInt(item.serial))) {
+        const serialNumber = parseInt(item.serial);
+        if (serialNumber > 0) {
+          const level50A = parseFloat(document.getElementById('level50A').value);
+          const level50B = parseFloat(document.getElementById('level50B').value);
+          const level35A = parseFloat(document.getElementById('level35A').value);
+          const level35B = parseFloat(document.getElementById('level35B').value);
+          
+          if (item.maxLevel === 50) {
+            serialMultiplier = Math.max(1, -level50A * Math.log(serialNumber) + level50B);
+          } else if (item.maxLevel === 35) {
+            serialMultiplier = Math.max(1, -level35A * Math.log(serialNumber) + level35B);
+          }
         }
       }
 
-      document.querySelectorAll('.inflation-details').forEach(details => {
-        if (details.style.display !== 'none') {
-          const itemElement = details.closest('.item');
-          const itemId = itemElement.getAttribute('data-id');
-          const item = items.find(i => i.id === parseInt(itemId));
-          updateInflationDisplay(itemElement, item);
+      const totalMultiplier = statMultiplier * levelMultiplier * serialMultiplier;
+
+      let chartContainer = inflationDetails.querySelector('.inflation-chart-container');
+      if (!chartContainer) {
+        chartContainer = document.createElement('div');
+        chartContainer.className = 'inflation-chart-container';
+        const canvas = document.createElement('canvas');
+        chartContainer.appendChild(canvas);
+        inflationDetails.insertBefore(chartContainer, projectedValues);
+      }
+
+      projectedValues.innerHTML = '<strong>Projected Values:</strong><br>';
+      const currentDate = new Date();
+      const projectedData = [];
+      const currentValue = item.baseValue * totalMultiplier;
+      
+      const currentDateString = '2024-11';
+      projectedValues.innerHTML += `${currentDateString}: ${formatValue(currentValue)} credits<br>`;
+      projectedData.push({date: currentDateString, value: currentValue});
+      
+      for (let i = 1; i <= 6; i++) {
+        const projectedDate = new Date(2024, 10 + i, 1);
+        const projectedValue = calculateInflationValue(currentValue, i, item.inflationData.inflationRate);
+        const dateString = `${projectedDate.getFullYear()}-${String(projectedDate.getMonth() + 1).padStart(2, '0')}`;
+        projectedValues.innerHTML += `${dateString}: ${formatValue(projectedValue)} credits<br>`;
+        projectedData.push({date: dateString, value: projectedValue});
+      }
+
+      const canvas = inflationDetails.querySelector('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (canvas.chart) {
+        canvas.chart.destroy();
+      }
+
+      canvas.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: projectedData.map(data => data.date),
+          datasets: [{
+            label: 'Projected Value',
+            data: projectedData.map(data => data.value),
+            borderColor: document.body.classList.contains('dark-mode') ? '#6aba6f' : '#4CAF50',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 500
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              grid: {
+                color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+              },
+              ticks: {
+                color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333'
+              }
+            },
+            x: {
+              grid: {
+                color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+              },
+              ticks: {
+                color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333'
+              }
+            }
+          }
         }
+      });
+
+      const inflationRateInput = inflationDetails.querySelector('.inflation-rate-input');
+      inflationRateInput.addEventListener('change', (e) => {
+        const newRate = parseFloat(e.target.value) / 100 + 1;
+        item.inflationData.inflationRate = newRate;
+        
+        projectedValues.innerHTML = '<strong>Projected Values:</strong><br>';
+        const projectedData = [];
+        
+        projectedValues.innerHTML += `${currentDateString}: ${formatValue(currentValue)} credits<br>`;
+        projectedData.push({date: currentDateString, value: currentValue});
+        
+        for (let i = 1; i <= 6; i++) {
+          const projectedDate = new Date(2024, 10 + i, 1);
+          const projectedValue = calculateInflationValue(currentValue, i, newRate);
+          const dateString = `${projectedDate.getFullYear()}-${String(projectedDate.getMonth() + 1).padStart(2, '0')}`;
+          projectedValues.innerHTML += `${dateString}: ${formatValue(projectedValue)} credits<br>`;
+          projectedData.push({date: dateString, value: projectedValue});
+        }
+
+        canvas.chart.data.labels = projectedData.map(data => data.date);
+        canvas.chart.data.datasets[0].data = projectedData.map(data => data.value);
+        canvas.chart.update();
+      });
+    }
+
+    function calculateInflationValue(baseValue, months, inflationRate) {
+      return baseValue * Math.pow(inflationRate, months);
+    }
+
+    function updateItemValue(item, side) {
+      const itemElement = document.querySelector(`#${side} .item[data-id="${item.id}"]`);
+      
+      const actualBaseValue = item.baseCustomValue !== null ? item.baseCustomValue : item.baseValue;
+
+      const checkedStats = Object.keys(item.stats).filter(stat => {
+        const checkbox = itemElement.querySelector(`input[type="checkbox"][id="${item.id}-${stat}"]`);
+        return checkbox.checked && enabledStats[stat];
+      }).length;
+
+      let statMultiplier = 1;
+      switch(checkedStats) {
+        case 1:
+          statMultiplier = 1.05;
+          break;
+        case 2:
+          statMultiplier = 1.1;
+          break;
+        case 3:
+          statMultiplier = 1.5;
+          break;
+        case 4:
+          statMultiplier = 2.0;
+          break;
+      }
+      
+      const levelMultiplier = item.maxLevel > 1 ? 
+        1 + (0.5 * ((item.level - 1) / (item.maxLevel - 1))) : 
+        1; 
+      
+      let serialMultiplier = 1;
+      if (item.serial && !isNaN(parseInt(item.serial))) {
+        const serialNumber = parseInt(item.serial);
+        if (serialNumber > 0) {
+          const level50A = parseFloat(document.getElementById('level50A').value);
+          const level50B = parseFloat(document.getElementById('level50B').value);
+          const level35A = parseFloat(document.getElementById('level35A').value);
+          const level35B = parseFloat(document.getElementById('level35B').value);
+          
+          if (item.maxLevel === 50) {
+            serialMultiplier = Math.max(1, -level50A * Math.log(serialNumber) + level50B);
+          } else if (item.maxLevel === 35) {
+            serialMultiplier = Math.max(1, -level35A * Math.log(serialNumber) + level35B);
+          }
+        }
+      }
+
+      const inflationMultiplier = 1;
+
+      const newValue = Math.round(
+        actualBaseValue * 
+        statMultiplier * 
+        levelMultiplier * 
+        serialMultiplier *
+        inflationMultiplier
+      );
+      
+      itemElement.querySelector('.item-value input').value = newValue;
+      item.value = newValue;
+
+      const isYourSide = side === 'yourItems';
+      const trade = isYourSide ? yourTrade : theirTrade;
+      const index = trade.findIndex(i => i.id === item.id && i.level === item.level && i.serial === item.serial && JSON.stringify(i.stats) === JSON.stringify(item.stats));
+
+      if (index !== -1) {
+        trade[index].value = newValue;
+        trade[index].stats = { ...item.stats };
+        trade[index].serial = item.serial;
+        trade[index].level = item.level;
+      }
+
+      updateTradeSummary(isYourSide);
+      updateResult();
+    }
+
+    function updateTradeSummary(isYourSide) {
+      const trade = isYourSide ? yourTrade : theirTrade;
+      const summaryElement = document.getElementById(isYourSide ? 'yourTradeItems' : 'theirTradeItems');
+      const totalElement = document.getElementById(isYourSide ? 'yourTotal' : 'theirTotal');
+      const credits = isYourSide ? yourCredits : theirCredits;
+
+      let summaryHTML = '';
+      if (credits > 0) {
+        summaryHTML += `<div>Credits: ${formatValue(credits)}</div>`;
+      }
+      
+      summaryHTML += trade.map((item, index) => {
+        const activeStats = Object.entries(item.stats)
+          .filter(([_, value]) => value > 0)
+          .map(([stat, value]) => `${stat}: ${value}`)
+          .join(', ');
+        const serialInfo = item.serial ? `Serial: ${item.serial}` : 'No serial';
+        const statsInfo = activeStats ? `Stats: ${activeStats}` : 'No stats';
+        
+        return `<div>
+          ${item.name} #${index + 1} (Lvl ${item.level}) x${item.quantity}: ${formatValue(item.value * item.quantity)} credits<br>
+          ${statsInfo}<br>
+          ${serialInfo}
+        </div>`;
+      }).join('');
+
+      summaryElement.innerHTML = summaryHTML;
+
+      const total = trade.reduce((sum, item) => sum + item.value * item.quantity, 0) + credits;
+      totalElement.textContent = `Total: ${formatValue(total)} credits`;
+    }
+
+    function updateResult() {
+      const yourTotal = yourTrade.reduce((sum, item) => sum + item.value * item.quantity, 0) + yourCredits;
+      const theirTotal = theirTrade.reduce((sum, item) => sum + item.value * item.quantity, 0) + theirCredits;
+      const difference = yourTotal - theirTotal;
+
+      const result = document.getElementById('result');
+      const demandBalance = calculateDemandBalance();
+      
+      let resultText = '';
+      if (difference > 0) {
+        resultText = `You are overpaying by ${formatValue(difference)} credits`;
+        result.style.backgroundColor = `var(--result-overpay-bg)`;
+      } else if (difference < 0) {
+        resultText = `You are underpaying by ${formatValue(Math.abs(difference))} credits`;
+        result.style.backgroundColor = `var(--result-underpay-bg)`;
+      } else {
+        resultText = 'The trade is balanced!';
+        result.style.backgroundColor = `var(--result-balanced-bg)`;
+      }
+
+      result.innerHTML = `${resultText}<br><span style="font-size: 14px; opacity: 0.9; margin-top: 5px; display: block;">Demand Balance: ${demandBalance}</span>`;
+      result.style.color = `var(--result-text-color)`;
+    }
+
+    function updateInflationDisplay(container, item) {
+      const inflationDetails = container.querySelector('.inflation-details');
+      const projectedValues = inflationDetails.querySelector('.projected-values');
+
+      const checkedStats = Object.keys(item.stats).filter(stat => item.stats[stat] > 0).length;
+      let statMultiplier = 1;
+      switch(checkedStats) {
+        case 1: statMultiplier = 1.05; break;
+        case 2: statMultiplier = 1.1; break;
+        case 3: statMultiplier = 1.5; break;
+        case 4: statMultiplier = 2.0; break;
+      }
+      
+      const levelMultiplier = item.maxLevel > 1 ? 
+        1 + (0.5 * ((item.level - 1) / (item.maxLevel - 1))) : 
+        1; 
+      
+      let serialMultiplier = 1;
+      if (item.serial && !isNaN(parseInt(item.serial))) {
+        const serialNumber = parseInt(item.serial);
+        if (serialNumber > 0) {
+          const level50A = parseFloat(document.getElementById('level50A').value);
+          const level50B = parseFloat(document.getElementById('level50B').value);
+          const level35A = parseFloat(document.getElementById('level35A').value);
+          const level35B = parseFloat(document.getElementById('level35B').value);
+          
+          if (item.maxLevel === 50) {
+            serialMultiplier = Math.max(1, -level50A * Math.log(serialNumber) + level50B);
+          } else if (item.maxLevel === 35) {
+            serialMultiplier = Math.max(1, -level35A * Math.log(serialNumber) + level35B);
+          }
+        }
+      }
+
+      const totalMultiplier = statMultiplier * levelMultiplier * serialMultiplier;
+
+      let chartContainer = inflationDetails.querySelector('.inflation-chart-container');
+      if (!chartContainer) {
+        chartContainer = document.createElement('div');
+        chartContainer.className = 'inflation-chart-container';
+        const canvas = document.createElement('canvas');
+        chartContainer.appendChild(canvas);
+        inflationDetails.insertBefore(chartContainer, projectedValues);
+      }
+
+      projectedValues.innerHTML = '<strong>Projected Values:</strong><br>';
+      const currentDate = new Date();
+      const projectedData = [];
+      const currentValue = item.baseValue * totalMultiplier;
+      
+      const currentDateString = '2024-11';
+      projectedValues.innerHTML += `${currentDateString}: ${formatValue(currentValue)} credits<br>`;
+      projectedData.push({date: currentDateString, value: currentValue});
+      
+      for (let i = 1; i <= 6; i++) {
+        const projectedDate = new Date(2024, 10 + i, 1);
+        const projectedValue = calculateInflationValue(currentValue, i, item.inflationData.inflationRate);
+        const dateString = `${projectedDate.getFullYear()}-${String(projectedDate.getMonth() + 1).padStart(2, '0')}`;
+        projectedValues.innerHTML += `${dateString}: ${formatValue(projectedValue)} credits<br>`;
+        projectedData.push({date: dateString, value: projectedValue});
+      }
+
+      const canvas = inflationDetails.querySelector('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (canvas.chart) {
+        canvas.chart.destroy();
+      }
+
+      canvas.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: projectedData.map(data => data.date),
+          datasets: [{
+            label: 'Projected Value',
+            data: projectedData.map(data => data.value),
+            borderColor: document.body.classList.contains('dark-mode') ? '#6aba6f' : '#4CAF50',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 500
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              grid: {
+                color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+              },
+              ticks: {
+                color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333'
+              }
+            },
+            x: {
+              grid: {
+                color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+              },
+              ticks: {
+                color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333'
+              }
+            }
+          }
+        }
+      });
+
+      const inflationRateInput = inflationDetails.querySelector('.inflation-rate-input');
+      inflationRateInput.addEventListener('change', (e) => {
+        const newRate = parseFloat(e.target.value) / 100 + 1;
+        item.inflationData.inflationRate = newRate;
+        
+        projectedValues.innerHTML = '<strong>Projected Values:</strong><br>';
+        const projectedData = [];
+        
+        projectedValues.innerHTML += `${currentDateString}: ${formatValue(currentValue)} credits<br>`;
+        projectedData.push({date: currentDateString, value: currentValue});
+        
+        for (let i = 1; i <= 6; i++) {
+          const projectedDate = new Date(2024, 10 + i, 1);
+          const projectedValue = calculateInflationValue(currentValue, i, newRate);
+          const dateString = `${projectedDate.getFullYear()}-${String(projectedDate.getMonth() + 1).padStart(2, '0')}`;
+          projectedValues.innerHTML += `${dateString}: ${formatValue(projectedValue)} credits<br>`;
+          projectedData.push({date: dateString, value: projectedValue});
+        }
+
+        canvas.chart.data.labels = projectedData.map(data => data.date);
+        canvas.chart.data.datasets[0].data = projectedData.map(data => data.value);
+        canvas.chart.update();
       });
     }
 
