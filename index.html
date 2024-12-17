@@ -333,8 +333,9 @@
     font-size: 18px;
     font-weight: bold;
     margin-top: 20px;
-    padding: 10px;
+    padding: 15px;
     border-radius: 5px;
+    line-height: 1.4;
   }
   #settingsToggle {
     position: fixed;
@@ -653,6 +654,7 @@
 		<li>Fixed the search bar</li>
 		<li>Added custom base value</li>
 		<li>Added demand for items @weetch</li>
+		<li>Compare demand on both sides of trade @weetch</li>
       </ul>
     </div>
     <div class="social-banner">
@@ -1140,6 +1142,51 @@
       updateItemValue(item, side);
     }
 
+    function calculateDemandBalance() {
+      const yourAverageDemand = yourTrade.reduce((sum, item) => sum + (item.demand * item.quantity), 0) / 
+        yourTrade.reduce((sum, item) => sum + item.quantity, 0) || 0;
+      
+      const theirAverageDemand = theirTrade.reduce((sum, item) => sum + (item.demand * item.quantity), 0) / 
+        theirTrade.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+      if (yourTrade.length === 0 || theirTrade.length === 0) {
+        return 'No items to compare';
+      }
+
+      const demandDiff = yourAverageDemand - theirAverageDemand;
+      
+      if (demandDiff < -0.5) {
+        return 'WIN - You are receiving higher demand items';
+      } else if (demandDiff > 0.5) {
+        return 'LOSS - You are giving higher demand items';
+      }
+      return 'EVEN - Similar demand on both sides';
+    }
+
+    function updateResult() {
+      const yourTotal = yourTrade.reduce((sum, item) => sum + item.value * item.quantity, 0) + yourCredits;
+      const theirTotal = theirTrade.reduce((sum, item) => sum + item.value * item.quantity, 0) + theirCredits;
+      const difference = yourTotal - theirTotal;
+
+      const result = document.getElementById('result');
+      const demandBalance = calculateDemandBalance();
+      
+      let resultText = '';
+      if (difference > 0) {
+        resultText = `You are overpaying by ${formatValue(difference)} credits`;
+        result.style.backgroundColor = `var(--result-overpay-bg)`;
+      } else if (difference < 0) {
+        resultText = `You are underpaying by ${formatValue(Math.abs(difference))} credits`;
+        result.style.backgroundColor = `var(--result-underpay-bg)`;
+      } else {
+        resultText = 'The trade is balanced!';
+        result.style.backgroundColor = `var(--result-balanced-bg)`;
+      }
+
+      result.innerHTML = `${resultText}<br><span style="font-size: 14px; opacity: 0.9; margin-top: 5px; display: block;">Demand Balance: ${demandBalance}</span>`;
+      result.style.color = `var(--result-text-color)`;
+    }
+
     function updateInflationDisplay(container, item) {
       const inflationDetails = container.querySelector('.inflation-details');
       const projectedValues = inflationDetails.querySelector('.projected-values');
@@ -1399,18 +1446,21 @@
       const difference = yourTotal - theirTotal;
 
       const result = document.getElementById('result');
+      const demandBalance = calculateDemandBalance();
       
+      let resultText = '';
       if (difference > 0) {
-        result.textContent = `You are overpaying by ${formatValue(difference)} credits`;
+        resultText = `You are overpaying by ${formatValue(difference)} credits`;
         result.style.backgroundColor = `var(--result-overpay-bg)`;
       } else if (difference < 0) {
-        result.textContent = `You are underpaying by ${formatValue(Math.abs(difference))} credits`;
+        resultText = `You are underpaying by ${formatValue(Math.abs(difference))} credits`;
         result.style.backgroundColor = `var(--result-underpay-bg)`;
       } else {
-        result.textContent = 'The trade is balanced!';
+        resultText = 'The trade is balanced!';
         result.style.backgroundColor = `var(--result-balanced-bg)`;
       }
-      
+
+      result.innerHTML = `${resultText}<br><span style="font-size: 14px; opacity: 0.9; margin-top: 5px; display: block;">Demand Balance: ${demandBalance}</span>`;
       result.style.color = `var(--result-text-color)`;
     }
 
