@@ -2,7 +2,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BP2 W/E/L Calculator</title>
-<link rel="icon" type="image/x-icon" href="checkmark.png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
@@ -860,7 +859,6 @@
 	  { id: 61, name: "Early Access Case", baseValue: 6000000, baseCustomValue: null, demand: "5" , image: "EACase.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 1 },
       { id: 62, name: "Haunted Case", baseValue: 2500000, baseCustomValue: null, demand: "4" , image: "HauntedCase.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 1 }
     ];
-	
 function filterItems(searchTerm, containerId) {
   const container = document.getElementById(containerId);
   const items = container.getElementsByClassName('item');
@@ -912,6 +910,12 @@ function formatValue(value) {
 }
 function createItemGrid(containerId) {
   const container = document.getElementById(containerId);
+  document.querySelectorAll('.search-bar input').forEach(input => {
+    input.addEventListener('input', e => {
+      const containerId = e.target.closest('.trade-column').querySelector('.item-grid').id;
+      filterItems(e.target.value, containerId);
+    });
+  });
   items.forEach(item => {
     item.value = item.baseValue;
     const itemElement = document.createElement('div');
