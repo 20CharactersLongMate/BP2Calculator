@@ -2,6 +2,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BP2 W/E/L Calculator</title>
+<link rel="icon" type="image/x-icon" href="checkmark.png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
@@ -634,6 +635,48 @@
 
   .base-value label {
     font-size: 11px;
+  }
+
+  .dark-mode {
+    --bg-color: #1a1a1a;
+    --container-bg: #2c2c2c;
+    --text-color: #e0e0e0;
+    --border-color: #444;
+    --hover-bg: #3a3a3a;
+    --selected-border: #6aba6f;
+    --button-bg: #3a3a3a;
+    --button-border: #555;
+    --scrollbar-bg: #2c2c2c;
+    --scrollbar-thumb: #555;
+    --scrollbar-thumb-hover: #777;
+    --result-overpay-bg: #8B0000;
+    --result-underpay-bg: #006400;
+    --result-balanced-bg: #483D8B;
+    --result-text-color: #e0e0e0;
+  }
+
+  .dark-mode input {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+
+  .dark-mode select {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+
+  .dark-mode .item {
+    background-color: #2c2c2c;
+  }
+
+  .dark-mode .settings-panel {
+    background-color: #2c2c2c;
+  }
+
+  .dark-mode .modal {
+    background-color: #2c2c2c;
   }
 </style>
 </head>
@@ -1527,10 +1570,28 @@ function importSettings(file) {
   };
 }
 function changeTheme(theme) {
-  document.body.className = theme + '-theme';
+  document.body.classList.remove('light-theme', 'dark-theme', 'red-theme', 'green-theme', 'blue-theme', 'custom-theme');
+  document.body.classList.add(theme + '-theme');
+  if (theme === 'dark') {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
   if (theme === 'custom') {
     applyCustomTheme();
   }
+  const charts = document.querySelectorAll('canvas');
+  charts.forEach(canvas => {
+    if (canvas.chart) {
+      const isDark = document.body.classList.contains('dark-mode');
+      canvas.chart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+      canvas.chart.options.scales.x.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+      canvas.chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#333';
+      canvas.chart.options.scales.x.ticks.color = isDark ? '#e0e0e0' : '#333';
+      canvas.chart.options.plugins.legend.labels.color = isDark ? '#e0e0e0' : '#333';
+      canvas.chart.update();
+    }
+  });
 }
 function applyCustomTheme() {
   document.documentElement.style.setProperty('--bg-color', document.getElementById('bgColor').value);
