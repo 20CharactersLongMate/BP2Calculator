@@ -2,7 +2,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BP2 W/E/L Calculator</title>
-<link rel="icon" type="image/x-icon" href="checkmark.png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
@@ -80,6 +79,44 @@
     --result-text-color: #fff;
   }
 
+  /* Christmas theme */
+  .christmas-theme {
+    --bg-color: #2C5530;
+    --container-bg: #fff;
+    --text-color: #B22222;
+    --border-color: #4F7942;
+    --hover-bg: #E9FFE1;
+    --selected-border: #CC231E;
+    --button-bg: #E9FFE1;
+    --button-border: #4F7942;
+    --scrollbar-bg: #E9FFE1;
+    --scrollbar-thumb: #4F7942;
+    --scrollbar-thumb-hover: #2C5530;
+    --result-overpay-bg: #B22222;
+    --result-underpay-bg: #228B22;
+    --result-balanced-bg: #4F7942;
+    --result-text-color: #fff;
+  }
+
+  .christmas-theme .disclaimer-banner {
+    background-color: #FFE4E1;
+    border-color: #B22222;
+    color: #B22222;
+  }
+
+  .christmas-theme .updates-banner {
+    background-color: #E9FFE1;
+    border-color: #4F7942;
+    color: #2C5530;
+  }
+
+  .christmas-theme .social-banner {
+    background-color: #FFE4E1;
+    border-color: #B22222;
+    color: #B22222;
+  }
+
+  /* Dark theme */
   .dark-mode {
     --bg-color: #1a1a1a;
     --container-bg: #2c2c2c;
@@ -96,6 +133,30 @@
     --result-underpay-bg: #006400;
     --result-balanced-bg: #483D8B;
     --result-text-color: #e0e0e0;
+  }
+
+  .dark-mode input {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+
+  .dark-mode select {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+
+  .dark-mode .item {
+    background-color: #2c2c2c;
+  }
+
+  .dark-mode .settings-panel {
+    background-color: #2c2c2c;
+  }
+
+  .dark-mode .modal {
+    background-color: #2c2c2c;
   }
 
   .custom-theme {
@@ -702,7 +763,7 @@
     </div>
     <div class="social-banner">
       &#x1f4f1; Connect with us: 
-      <a href="https://sites.google.com/view/bp2valuelist/home">Website</a> | 
+      <a href="https://sites.google.com/view/bp2valuelist/home">Green's Value List</a> | 
       <a href="https://discord.gg/BP2">Discord Server</a>
     </div>
     <div class="trade-area">
@@ -752,6 +813,7 @@
         <option value="red">Red</option>
         <option value="green">Green</option>
         <option value="blue">Blue</option>
+        <option value="christmas">Christmas</option>
         <option value="custom">Custom</option>
       </select>
     </div>
@@ -1570,7 +1632,7 @@ function importSettings(file) {
   };
 }
 function changeTheme(theme) {
-  document.body.classList.remove('light-theme', 'dark-theme', 'red-theme', 'green-theme', 'blue-theme', 'custom-theme');
+  document.body.classList.remove('light-theme', 'dark-theme', 'red-theme', 'green-theme', 'blue-theme', 'christmas-theme', 'custom-theme');
   document.body.classList.add(theme + '-theme');
   if (theme === 'dark') {
     document.body.classList.add('dark-mode');
