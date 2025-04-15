@@ -1,4 +1,3 @@
-<html><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BP2 W/E/L Calculator</title>
@@ -746,7 +745,6 @@
     <h1>BP2 W/E/L Calculator</h1>
     <div class="disclaimer-banner">
       &#x26a0;&#xfe0f; Disclaimer: Items with special serial numbers may sell for significantly more than calculated values. This calculator provides base estimates only.
-    </div>
     <div class="updates-banner">
       <strong>Recent Updates:</strong>
       <ul>
@@ -759,7 +757,8 @@
 		<li>Added custom base value</li>
 		<li>Added demand for items @weetch</li>
 		<li>Compare demand on both sides of trade @weetch</li>
-	      	<li>Added a Level Calculator in links @NoPartyThisTime</li>
+	    <li>Added a Level Calculator in links @NoPartyThisTime</li>
+		<li>Fixed Serial Issue on Same Guns @TeeCakes</li>
       </ul>
     </div>
     <div class="social-banner">
@@ -902,70 +901,327 @@
     </div>
   </div>
 
-  <script>const items = [
-      { id: 1, name: "Dark Matter Rifle", baseValue: 125000000, baseCustomValue: null, demand: "4" , image: "DarkMatterRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
-      { id: 2, name: "Silenced Pistol", baseValue: 85000000, baseCustomValue: null, demand: "4" , image: "SilencedPistol.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
-      { id: 3, name: "The Cobra", baseValue: 100000000, baseCustomValue: null, demand: "4" , image: "TheCobra.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
-      { id: 4, name: "Thermal Sniper", baseValue: 45000000, baseCustomValue: null, demand: "3" , image: "ThermalSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
-      { id: 5, name: "Spring-loaded Minigun", baseValue: 30000000, baseCustomValue: null, demand: "2" , image: "SpringLoadedMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
-      { id: 6, name: "Lightweight Minigun", baseValue: 105000000, baseCustomValue: null, demand: "4" , image: "LeightweightMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 50 },
-      { id: 7, name: "24k Rifle", baseValue: 35000000, baseCustomValue: null, demand: "5" , image: "24kRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 8, name: "24k Sniper", baseValue: 35000000, baseCustomValue: null, demand: "5" , image: "24kSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 9, name: "24k Minigun", baseValue: 35000000, baseCustomValue: null, demand: "5" , image: "24kMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 10, name: "Merry Rifle", baseValue: 15000000, baseCustomValue: null, demand: "4" , image: "MerryRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 11, name: "Merry Sniper", baseValue: 15000000, baseCustomValue: null, demand: "4" , image: "MerrySniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 12, name: "Merry Minigun", baseValue: 15000000, baseCustomValue: null, demand: "4" , image: "MerryMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 13, name: "Ghostfire Rifle", baseValue: 50000000, baseCustomValue: null, demand: "5" , image: "GhostfireRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 14, name: "Ghostfire Sniper", baseValue: 50000000, baseCustomValue: null, demand: "5" , image: "GhostfireSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 15, name: "Ghostfire Minigun", baseValue: 50000000, baseCustomValue: null, demand: "5" , image: "GhostfireMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 16, name: "Voodoo Rifle", baseValue: 3000000, baseCustomValue: null, demand: "3" , image: "VoodooRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 17, name: "Vampire Slayer Sniper", baseValue: 4000000, baseCustomValue: null, demand: "4" , image: "VampireSlayerSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 18, name: "Carnage Minigun", baseValue: 3000000, baseCustomValue: null, demand: "3" , image: "CarnageMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 19, name: "Zombie Rifle", baseValue: 62000, baseCustomValue: null, demand: "2" , image: "ZombieRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 20, name: "Carnage Sniper", baseValue: 62500, baseCustomValue: null, demand: "2" , image: "CarnageSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 21, name: "Evil Circus Sniper", baseValue: 62500, baseCustomValue: null, demand: "2" , image: "EvilCircusSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 22, name: "Petrified Rifle", baseValue: 6200, baseCustomValue: null, demand: "2" , image: "PetrifiedRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 23, name: "Mummywrap Sniper", baseValue: 7000, baseCustomValue: null, demand: "2" , image: "MummywrapSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 24, name: "Stitched Minigun", baseValue: 6500, baseCustomValue: null, demand: "2" , image: "StitchedMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 25, name: "Starfall Rifle", baseValue: 175000, baseCustomValue: null, demand: "1" , image: "StarfallRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 26, name: "Starfall Sniper", baseValue: 175000, baseCustomValue: null, demand: "1" , image: "StarfallSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 27, name: "Starfall Minigun", baseValue: 175000, baseCustomValue: null, demand: "1" , image: "StarfallMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 28, name: "Spitfire Rifle", baseValue: 75000, baseCustomValue: null, demand: "1" , image: "SpitfireRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 29, name: "Spitfire Sniper", baseValue: 75000, baseCustomValue: null, demand: "1" , image: "SpitfireSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 30, name: "Spitfire Minigun", baseValue: 75000, baseCustomValue: null, demand: "1" , image: "SpitfireMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 31, name: "Futura Rifle", baseValue: 450000, baseCustomValue: null, demand: "2" , image: "FuturaRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 32, name: "Futura Sniper", baseValue: 450000, baseCustomValue: null, demand: "2" , image: "FuturaSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 33, name: "Futura Minigun", baseValue: 450000, baseCustomValue: null, demand: "2" , image: "FuturaMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 34, name: "Elite Rifle", baseValue: 400000, baseCustomValue: null, demand: "2" , image: "EliteRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 35, name: "Elite Sniper", baseValue: 400000, baseCustomValue: null, demand: "2" , image: "EliteSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 36, name: "Elite Minigun", baseValue: 400000, baseCustomValue: null, demand: "2" , image: "EliteMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 37, name: "Ryu Rifle", baseValue: 3000000, baseCustomValue: null, demand: "3" , image: "RyuRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 38, name: "Ryu Sniper", baseValue: 3000000, baseCustomValue: null, demand: "3" , image: "RyuSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 39, name: "Ryu Minigun", baseValue: 3000000, baseCustomValue: null, demand: "3" , image: "RyuMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 40, name: "Lovebomb Rifle", baseValue: 3250000, baseCustomValue: null, demand: "3" , image: "LovebombRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 41, name: "Lovebomb Sniper", baseValue: 3250000, baseCustomValue: null, demand: "3" , image: "LovebombSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 42, name: "Lovebomb Minigun", baseValue: 3250000, baseCustomValue: null, demand: "3" , image: "LovebombMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 43, name: "Money Rifle", baseValue: 3250000, baseCustomValue: null, demand: "3" , image: "MoneyRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 44, name: "Money Sniper", baseValue: 3250000, baseCustomValue: null, demand: "3" , image: "MoneySniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 45, name: "Money Minigun", baseValue: 3250000, baseCustomValue: null, demand: "3" , image: "MoneyMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 46, name: "Money Gun", baseValue: 6500000, baseCustomValue: null, demand: "4" , image: "MoneyGun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 47, name: "Retro Rifle", baseValue: 3250000, baseCustomValue: null, demand: "2" , image: "RetroRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 48, name: "Neonrider Rifle", baseValue: 3250000, baseCustomValue: null, demand: "2" , image: "NeonRiderRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 49, name: "Neonrider Minigun", baseValue: 3250000, baseCustomValue: null, demand: "2" , image: "NeonRiderMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 50, name: "Whiteout Rifle", baseValue: 3250000, baseCustomValue: null, demand: "1" , image: "WhiteOutRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 51, name: "Whiteout Sniper", baseValue: 3250000, baseCustomValue: null, demand: "1" , image: "WhiteOutSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 52, name: "Whiteout Minigun", baseValue: 3250000, baseCustomValue: null, demand: "1" , image: "WhiteOutMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 53, name: "Sundown Rifle", baseValue: 52000, baseCustomValue: null, demand: "1" , image: "SundownRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 54, name: "Sundown Sniper", baseValue: 53000, baseCustomValue: null, demand: "1" , image: "SundownSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 55, name: "Sundown Minigun", baseValue: 52500, baseCustomValue: null, demand: "1" , image: "SundownMinigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 56, name: "Joystick Rifle", baseValue: 200000, baseCustomValue: null, demand: "1" , image: "JoystickRifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 57, name: "Joystick Sniper", baseValue: 205000, baseCustomValue: null, demand: "1" , image: "JoystickSniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 58, name: "Unit-005 Rifle", baseValue: 310000, baseCustomValue: null, demand: "1" , image: "Unit005Rifle.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 59, name: "Unit-006 Minigun", baseValue: 315000, baseCustomValue: null, demand: "1" , image: "Unit006Minigun.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-      { id: 60, name: "Unit-007 Sniper", baseValue: 320000, baseCustomValue: null, demand: "1" , image: "Unit007Sniper.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 35 },
-	  { id: 61, name: "Early Access Case", baseValue: 6000000, baseCustomValue: null, demand: "5" , image: "EACase.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 1 },
-      { id: 62, name: "Haunted Case", baseValue: 2500000, baseCustomValue: null, demand: "4" , image: "HauntedCase.png", stats: { studs: 0, tags: 0, minutes: 0, bullets: 0 }, serial: "", level: 1, maxLevel: 1 }
-    ];
+  <script>const items = [{
+  id: 1,
+  name: "Sword",
+  baseValue: 100,
+  baseCustomValue: null,
+  demand: 4,
+  image: "sword.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 2,
+  name: "Shield",
+  baseValue: 75,
+  baseCustomValue: null,
+  demand: 3,
+  image: "shield.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 3,
+  name: "Potion",
+  baseValue: 25,
+  baseCustomValue: null,
+  demand: 5,
+  image: "potion.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 50
+}, {
+  id: 4,
+  name: "Armor",
+  baseValue: 150,
+  baseCustomValue: null,
+  demand: 4,
+  image: "armor.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 5,
+  name: "Bow",
+  baseValue: 80,
+  baseCustomValue: null,
+  demand: 3,
+  image: "bow.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 6,
+  name: "Arrow",
+  baseValue: 5,
+  baseCustomValue: null,
+  demand: 2,
+  image: "arrow.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 50
+}, {
+  id: 7,
+  name: "Helmet",
+  baseValue: 50,
+  baseCustomValue: null,
+  demand: 3,
+  image: "helmet.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 8,
+  name: "Boots",
+  baseValue: 40,
+  baseCustomValue: null,
+  demand: 3,
+  image: "boots.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 9,
+  name: "Ring",
+  baseValue: 200000,
+  baseCustomValue: null,
+  demand: 5,
+  image: "ring.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 1
+}, {
+  id: 10,
+  name: "Amulet",
+  baseValue: 1800000,
+  baseCustomValue: null,
+  demand: 5,
+  image: "amulet.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 1
+}, {
+  id: 11,
+  name: "Gem",
+  baseValue: 3000000000,
+  baseCustomValue: null,
+  demand: 5,
+  image: "gem.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 50
+}, {
+  id: 12,
+  name: "Map",
+  baseValue: 20,
+  baseCustomValue: null,
+  demand: 2,
+  image: "map.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 13,
+  name: "Scroll",
+  baseValue: 30,
+  baseCustomValue: null,
+  demand: 3,
+  image: "scroll.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 50
+}, {
+  id: 14,
+  name: "Wand",
+  baseValue: 120,
+  baseCustomValue: null,
+  demand: 4,
+  image: "wand.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 15,
+  name: "Staff",
+  baseValue: 180,
+  baseCustomValue: null,
+  demand: 4,
+  image: "staff.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 16,
+  name: "Dagger",
+  baseValue: 60,
+  baseCustomValue: null,
+  demand: 3,
+  image: "dagger.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 17,
+  name: "Axe",
+  baseValue: 90,
+  baseCustomValue: null,
+  demand: 3,
+  image: "axe.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 18,
+  name: "Mace",
+  baseValue: 85,
+  baseCustomValue: null,
+  demand: 3,
+  image: "mace.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 19,
+  name: "Spear",
+  baseValue: 95,
+  baseCustomValue: null,
+  demand: 3,
+  image: "spear.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}, {
+  id: 20,
+  name: "Crossbow",
+  baseValue: 110,
+  baseCustomValue: null,
+  demand: 4,
+  image: "crossbow.svg",
+  stats: {
+    studs: false,
+    tags: false,
+    minutes: false,
+    bullets: false
+  },
+  serial: "",
+  level: 1,
+  maxLevel: 35
+}];
 function filterItems(searchTerm, containerId) {
   const container = document.getElementById(containerId);
   const items = container.getElementsByClassName('item');
@@ -1124,18 +1380,38 @@ function updateQuantity(item, side, quantity) {
   const isYourSide = side === 'yourItems';
   const trade = isYourSide ? yourTrade : theirTrade;
   const itemElement = event.target.closest('.item');
+  
+  // Create a deep copy of the item to ensure independence
   const tradeItem = {
     ...item,
     id: item.id,
     quantity: parseInt(quantity),
     value: item.value,
     level: item.level,
-    stats: {
-      ...item.stats
-    },
-    serial: item.serial
+    stats: { ...item.stats },
+    serial: "", // Reset serial for new items
+    baseValue: item.baseValue,
+    baseCustomValue: item.baseCustomValue,
+    demand: item.demand,
+    maxLevel: item.maxLevel,
+    name: item.name,
+    image: item.image,
+    inflationData: { ...item.inflationData }
   };
-  const index = trade.findIndex(i => i.id === item.id && i.level === item.level && i.serial === item.serial && JSON.stringify(i.stats) === JSON.stringify(item.stats));
+
+  // Get serial from the current element's input
+  const serialInput = itemElement.querySelector('.item-serial input');
+  if (serialInput) {
+    tradeItem.serial = serialInput.value;
+  }
+
+  const index = trade.findIndex(i => 
+    i.id === item.id && 
+    i.level === item.level && 
+    i.serial === tradeItem.serial && // Compare with new item's serial
+    JSON.stringify(i.stats) === JSON.stringify(item.stats)
+  );
+
   if (quantity > 0) {
     if (index === -1) {
       trade.push(tradeItem);
@@ -1149,7 +1425,8 @@ function updateQuantity(item, side, quantity) {
     }
     itemElement.classList.remove('selected');
   }
-  updateItemValue(item, side);
+
+  updateItemValue(tradeItem, side);
   updateTradeSummary(isYourSide);
   updateResult();
 }
@@ -1369,7 +1646,6 @@ function updateInflationDisplay(container, item) {
     inflationDetails.insertBefore(chartContainer, projectedValues);
   }
   projectedValues.innerHTML = '<strong>Projected Values:</strong><br>';
-  const currentDate = new Date();
   const projectedData = [];
   const currentValue = item.baseValue * totalMultiplier;
   const currentDateString = '2024-11';
